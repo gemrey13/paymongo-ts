@@ -1,10 +1,15 @@
-import { api as variableAPI, options as optionsAPI } from "./variables";
-import { Data, Options } from "./types";
+import {
+  api as variableAPI,
+  options as optionsAPI,
+  responseQ,
+} from "./variables";
+import { Data, Options, responseData } from "./types";
 import axios, { AxiosRequestConfig } from "axios";
 
 class Paymongo {
   data: Data;
   options: AxiosRequestConfig;
+  q: responseData;
 
   constructor(private secretkey: string, public api: string = variableAPI) {
     this.secretkey = secretkey;
@@ -15,6 +20,7 @@ class Paymongo {
       remarks: "",
     };
     this.options = { data: { data: {} } };
+    this.q = responseQ;
   }
 
   insert(data: Data) {
@@ -39,8 +45,9 @@ class Paymongo {
   async getPayLink() {
     try {
       const response = await axios.request(this.options);
-      const q = response.data;
-      console.log(q);
+      const gr = response.data;
+      this.q = gr.data;
+      return this.q;
     } catch (error) {
       console.log(error);
     }
@@ -54,7 +61,10 @@ const data: Data = {
   remarks: "sample remarks",
 };
 paymongo.insert(data);
-// console.log(paymongo.options);
-// console.log(paymongo.options.data.data);
 
-paymongo.getPayLink();
+async function getData() {
+  const datas = await paymongo.getPayLink();
+  console.log(datas);
+}
+
+getData();
