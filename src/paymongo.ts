@@ -1,13 +1,8 @@
-import {
-  api as variableAPI,
-  options as optionsAPI,
-  responseQ,
-  retrieveData as rD,
-} from "./variables";
-import { Data, Options, responseData } from "./types";
+import { api as variableAPI, responseQ, retrieveData as rD } from "./variables";
+import { Data, PaymongoInterface, responseData } from "./types";
 import axios, { AxiosRequestConfig } from "axios";
 
-export class Paymongo {
+export class Paymongo implements PaymongoInterface {
   data: Data;
   options: AxiosRequestConfig;
   q: responseData;
@@ -28,14 +23,14 @@ export class Paymongo {
     this.retrieveData = rD;
   }
 
-  insert(data: Data) {
+  public insert(data: Data) {
     this.data.amount = data.amount * 100;
     this.data.description = data.description;
     this.data.remarks = data.remarks;
     this.formatData();
   }
 
-  formatData() {
+  private formatData() {
     this.options.url = this.api;
     this.options.data.data.attributes = this.data;
     this.options.method = "POST";
@@ -47,7 +42,7 @@ export class Paymongo {
     };
   }
 
-  async getPayLink() {
+  public async getPayLink() {
     try {
       const response = await axios.request(this.options);
       const gr = response.data;
@@ -59,7 +54,7 @@ export class Paymongo {
     }
   }
 
-  async retrieve() {
+  public async retrieve() {
     try {
       this.options.headers = {
         Accept: "application/json",

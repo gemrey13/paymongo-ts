@@ -1,14 +1,9 @@
+import { AxiosRequestConfig } from "axios";
+
 export interface Data {
   amount: number;
   description: string;
   remarks?: string;
-}
-
-export interface Options {
-  method: string;
-  url: string;
-  headers: Headers;
-  data: { data: { attributes: Data } };
 }
 
 export interface responseData {
@@ -88,4 +83,16 @@ export interface PaymentAttributes {
   credited_at: number;
   paid_at: number;
   updated_at: number;
+}
+
+export interface PaymongoInterface {
+  api: string;
+  data: Data;
+  options: AxiosRequestConfig;
+  q: any;
+  linkID: string;
+  retrieveData: any;
+  insert(data: Data): void;
+  getPayLink(): Promise<any>;
+  retrieve(): Promise<PaymentResponse>;
 }
