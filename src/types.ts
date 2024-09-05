@@ -27,12 +27,12 @@ export interface ResponseAttributes {
   remarks: string;
   status: string;
   tax_amount?: number | null;
-  taxes: [];
-  checkot_url: string;
+  taxes: Array<string>;
+  checkout_url: string;
   reference_number: string;
   created_at: number;
   updated_at: number;
-  payments: PaymentResponse[];
+  payments: Array<PaymentResponse>;
 }
 
 export interface PaymentResponse {

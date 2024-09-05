@@ -2,14 +2,17 @@ import {
   api as variableAPI,
   options as optionsAPI,
   responseQ,
+  retrieveData as rD,
 } from "./variables";
 import { Data, Options, responseData } from "./types";
 import axios, { AxiosRequestConfig } from "axios";
 
-class Paymongo {
+export class Paymongo {
   data: Data;
   options: AxiosRequestConfig;
   q: responseData;
+  linkID: string;
+  retrieveData: responseData;
 
   constructor(private secretkey: string, public api: string = variableAPI) {
     this.secretkey = secretkey;
@@ -21,6 +24,8 @@ class Paymongo {
     };
     this.options = { data: { data: {} } };
     this.q = responseQ;
+    this.linkID = "";
+    this.retrieveData = rD;
   }
 
   insert(data: Data) {
@@ -47,26 +52,28 @@ class Paymongo {
       const response = await axios.request(this.options);
       const gr = response.data;
       this.q = gr.data;
+      this.linkID = this.q.id;
       return this.q;
     } catch (error) {
-      console.log(error);
+      console.error("getPayLink: ", error);
+    }
+  }
+
+  async retrieve() {
+    try {
+      this.options.headers = {
+        Accept: "application/json",
+        Authorization:
+          "Basic " + Buffer.from(this.secretkey + ":").toString("base64"),
+      };
+      this.options.data = {};
+      this.options.method = "GET";
+      this.options.url = this.api + "/" + this.linkID;
+      const response = await axios.request(this.options);
+      const gr = response.data.data;
+      return gr;
+    } catch (error) {
+      console.error("retrieve: ", error);
     }
   }
 }
-
-async function main() {
-  const paymongo = new Paymongo("sk_test_vHszhsmBVezafEUXDVYpdrpU");
-
-  const data: Data = {
-    amount: 12154,
-    description: "sample description",
-    remarks: "sample remarks",
-  };
-
-  paymongo.insert(data);
-
-  const datas = await paymongo.getPayLink();
-  console.log(datas);
-}
-
-main();
