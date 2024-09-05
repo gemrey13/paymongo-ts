@@ -11,12 +11,6 @@ export interface Options {
   data: { data: { attributes: Data } };
 }
 
-export interface Headers {
-  accept: string;
-  "content-type": string;
-  authorization: string;
-}
-
 export interface responseData {
   id: string;
   type: string;
