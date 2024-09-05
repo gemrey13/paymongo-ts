@@ -33,7 +33,6 @@ export class Paymongo implements PaymongoInterface {
   private getAuthorizationHeader(): string {
     const token = `${this.secretkey}:`;
     if (typeof Buffer !== "undefined") {
-      // Node.js environment
       return "Basic " + Buffer.from(token).toString("base64");
     } else {
       // Browser environment
