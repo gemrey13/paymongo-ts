@@ -30,6 +30,17 @@ export class Paymongo implements PaymongoInterface {
     this.formatData();
   }
 
+  private getAuthorizationHeader(): string {
+    const token = `${this.secretkey}:`;
+    if (typeof Buffer !== "undefined") {
+      // Node.js environment
+      return "Basic " + Buffer.from(token).toString("base64");
+    } else {
+      // Browser environment
+      return "Basic " + btoa(token);
+    }
+  }
+
   private formatData() {
     this.options.url = this.api;
     this.options.data.data.attributes = this.data;
@@ -37,8 +48,7 @@ export class Paymongo implements PaymongoInterface {
     this.options.headers = {
       Accept: "application/json",
       "Content-Type": "application/json",
-      Authorization:
-        "Basic " + Buffer.from(this.secretkey + ":").toString("base64"),
+      Authorization: this.getAuthorizationHeader(),
     };
   }
 
@@ -58,8 +68,7 @@ export class Paymongo implements PaymongoInterface {
     try {
       this.options.headers = {
         Accept: "application/json",
-        Authorization:
-          "Basic " + Buffer.from(this.secretkey + ":").toString("base64"),
+        Authorization: this.getAuthorizationHeader(),
       };
       this.options.data = {};
       this.options.method = "GET";
